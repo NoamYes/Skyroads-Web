@@ -1,0 +1,16 @@
+      html {
+
+        /* font-family: 'Cabin', sans-serif;*/
+        font-family: 'Nanum Gothic', sans-serif; 
+
+      }
+
+    .wrapper, .wrapper > * {
+        width: 20%;
+        margin: auto;
+        align-items: center;
+    }
+
+    .drawSection {
+        text-align: center;
+    }

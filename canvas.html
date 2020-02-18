@@ -1,0 +1,128 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Canvas Waves</title>
+  <link href="styles/canvas-style.css" rel="stylesheet">
+  
+</head>
+<body>
+  <!-- <script type="text/javascript" src="scripts/canvas-script.js"></script> -->
+
+  <div class="wrapper">
+    <a>Amplitude:<br></a>
+    <div class="slidecontainer">
+      <input type="range" min="1" max="10" value="5" onChange="change();" class="slider" id="myAmp">
+      <span class="showval" id="AmpVal"></span>
+    </div>
+
+    <a>Length:<br></a>
+    <div class="slidecontainer">
+      <input type="range" min="1" max="100" value="50" onChange="change();" class="slider" id="myLength">
+      <span class="showval" id="LenVal"></span>
+    </div>
+    <a>Frequency:<br></a>
+    <div class="slidecontainer">
+      <input type="range" min="0" max="10" value="0.5" onChange="change();" class="slider" id="myFreq">
+      <span class="showval" id="FreqVal"></span>
+    </div>  
+  </div>
+
+  <section class="drawSection">
+    <canvas id="wavesDraw">
+
+    </canvas>
+  </section>
+
+<script>
+
+  
+
+var result1 = document.getElementById("AmpVal");
+var mine1 = document.getElementById("myAmp");
+var result2 = document.getElementById("LenVal");
+var mine2 = document.getElementById("myLength");
+var result3 = document.getElementById("FreqVal");
+var mine3 = document.getElementById("myFreq");
+function change() {
+  result1.innerText = mine1.value;
+  result2.innerText = mine2.value;
+  result3.innerText = mine3.value;
+}
+var wavesDraw = document.getElementById("wavesDraw");
+var context = wavesDraw.getContext("2d");
+var width = wavesDraw.width = 1200;
+var height = wavesDraw.height = 1200;
+var x_a = 0;
+const y_offset = 300;
+const x_offset = 0;
+
+// for(let x=1; x<width; x++) {
+
+//   context.moveTo(x+x_offset, y+y_offset);
+//   x_a = x*0.01;
+//   var inner = 2*Math.PI*freq*x_a;
+//   var y = Math.round(amp*Math.cos(360*freq*x_a));
+//   // alert("amp: " + amp + "freq: " + freq +"\n" +
+//   // "x=" + x +"y=" +y + "inner: " + inner)
+//   x_new = x+x_offset;
+//   y_new = y+y_offset;
+//   context.lineTo(x_new, y_new);
+// }
+
+const ampInput = document.getElementById('myAmp');
+const freqInput = document.getElementById('myFreq');
+const lenInput = document.getElementById('myLength');
+ampInput.addEventListener('input', draw);
+freqInput.addEventListener('input', draw);
+lenInput.addEventListener('input', draw);
+
+let AmpRange= document.getElementById('myAmp');
+let LenRange= document.getElementById('myLength');
+let FreqRange= document.getElementById('myFreq');
+
+var amp = AmpRange.value;
+var len = LenRange.value;
+var freq = FreqRange.value;
+
+function draw() {
+
+amp = AmpRange.value;
+len = LenRange.value;
+freq = FreqRange.value;
+var canvas = document.getElementById("wavesDraw");
+context.clearRect(0, 0, canvas.width, canvas.height);
+if (null==canvas || !canvas.getContext) return;
+
+var axes={}, ctx=canvas.getContext("2d");
+axes.x0 = .5 + .5*canvas.width;  // x0 pixels from left to x=0
+axes.y0 = .5 + .5*canvas.height; // y0 pixels from top to y=0
+axes.scale = 40;                 // 40 pixels from x=0 to x=1
+axes.doNegativeX = true;
+
+funGraph(ctx,axes,fun1,"rgb(11,153,11)",1); 
+}
+function fun1(x) {return amp*Math.cos(2*Math.PI*freq*x);  }
+
+function funGraph (ctx,axes,func,color,thick,amp,freq) {
+var xx, yy, dx=1, x0=axes.x0, y0=axes.y0, scale=axes.scale;
+var iMax = Math.round((ctx.canvas.width-x0)/dx);
+var iMin = axes.doNegativeX ? Math.round(-x0/dx) : 0;
+ctx.beginPath();
+ctx.lineWidth = thick;
+ctx.strokeStyle = color;
+
+for (var i=iMin;i<=iMax;i++) {
+  xx = dx*i; yy = scale*func(xx/scale);
+  if (i==iMin) ctx.moveTo(x0+xx,y0-yy);
+  else         ctx.lineTo(x0+xx,y0-yy);
+}
+ctx.stroke();
+}
+
+</script>
+
+
+</body>
+
+</html>

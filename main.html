@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html>
+
+<body>
+<div class="wrapper">
+  <div class="date">
+    <p id="dateHead"></p>
+  </div>
+
+  <a href="canvas.html">Visit waves</a><br> 
+  <a href="cards.html">Visit cards</a><br> 
+  <a href="sort.html">Visit sort</a><br> 
+  <a href="fibonachi.html">Visit fibonachi & recursive pattern</a><br> 
+
+  <script>
+    var dateElem = document.getElementById("dateHead");
+    setInterval(function(){
+      var d = new Date();
+      document.getElementById("dateHead").innerHTML = d;
+}, 1000);
+  </script>
+
+</div>
+
+</body>
+
+</html>

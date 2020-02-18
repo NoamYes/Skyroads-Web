@@ -1,0 +1,24 @@
+  html {
+
+    /* font-family: 'Cabin', sans-serif;*/
+    font-family: 'Nanum Gothic', sans-serif; 
+
+  }
+
+.wrapper {
+    /* width: 20%; */
+    margin: auto;
+    align-items: center;
+}
+
+
+
+.inputs{
+  flex-flow: row wrap;
+  display: flex;
+  /* flex-direction: row-reverse; */
+  flex: 1 auto;
+  justify-content: space-around;
+  padding: 10px;
+  margin-top: 10px;
+}
