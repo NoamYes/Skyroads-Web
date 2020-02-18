@@ -11,18 +11,12 @@
     align-items: center;
 }
 
-
-
-.inputs{
-  flex-flow: row wrap;
-  display: flex;
-  /* flex-direction: row-reverse; */
-  flex: 1 auto;
-  justify-content: space-around;
-  padding: 10px;
-  margin-top: 10px;
-}
-
 .date p {
   font-size: 15;
+}
+
+canvas {
+  margin: auto;
+  border: 1px solid #d3d3d3;
+  background-color: #f1f1f1;
 }
