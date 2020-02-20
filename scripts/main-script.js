@@ -61,10 +61,16 @@ var myRoadArea = {
     rowsNum : 8,
     columnsNum : 6,
     prop : 80, //percentage of one's in matrix
-    mainBlock : new Block(90, 200, 100, 100),
-     init : function() {
+    blockMat : [][]
+    mainBlock : new Block(90, 90, 100, 100),
+     initRoad : function() {
         
-     this.mainBlock.block_init("red");
+        for (var i = 0; i < rowsNum; i++) {
+            for(var i = 0; i < rowsNum; i++) {
+                myMat[i] = this.randomArray(prop);
+            }
+            
+            }
 
      },
 
