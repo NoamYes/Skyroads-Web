@@ -3,8 +3,8 @@
 function startGame() {
     myGameArea.start();
     myRoadArea.init();
-    let randomArray = myRoadArea.randomArray(50)
-    alert(randomArray);
+    let road = myRoadArea.randomRoad(50)
+    // alert(road);
 }
 
 var myGameArea = {
@@ -71,13 +71,22 @@ var myRoadArea = {
          
     randomArray : function (prop) {
         let myArray = [];
-        let arrayMax = this.rowsNum;
-        let limit = 101;
+        let arrayMax = this.columnsNum;
+        const Perc = 101;
         for (var i = 0; i < arrayMax; i++) {
-        myArray.push(Math.floor(Math.random()*limit/prop));
+        myArray.push(Math.floor(Math.random()*Perc/prop));
             }
-
         return myArray;
+        },
+
+    randomRoad : function (prop) {
+        let myMat = [];
+        let rowsNum = this.rowsNum;
+        let columnsNum = this.columnsNum;
+        for (var i = 0; i < rowsNum; i++) {
+            myMat[i] = this.randomArray(prop);
+            }
+        return myMat;
         }
 }
 
