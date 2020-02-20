@@ -3,6 +3,8 @@
 function startGame() {
     myGameArea.start();
     myRoadArea.init();
+    let randomArray = myRoadArea.randomArray(50)
+    alert(randomArray);
 }
 
 var myGameArea = {
@@ -48,17 +50,34 @@ class block_line {
     }
     init_line(color) {
         this.context = myGameArea.context;
-        this.context.fillstyle = color;
+        this.context.fillStyle = "#FF0000";
         this.context.fillRect(this.x0, this.y0, this.width, 1);
     }
 }
 
 
 var myRoadArea = {
+
+    rowsNum : 8,
+    columnsNum : 6,
+    prop : 80, //percentage of one's in matrix
     mainBlock : new Block(90, 200, 100, 100),
      init : function() {
         
      this.mainBlock.block_init("red");
-     }
+
+     },
+
+         
+    randomArray : function (prop) {
+        let myArray = [];
+        let arrayMax = this.rowsNum;
+        let limit = 101;
+        for (var i = 0; i < arrayMax; i++) {
+        myArray.push(Math.floor(Math.random()*limit/prop));
+            }
+
+        return myArray;
+        }
 }
 
