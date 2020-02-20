@@ -4,6 +4,7 @@ function startGame() {
     myGameArea.start();
     myRoadArea.initRoad();
     myRoadArea.updateRoad();
+    this.interval = setInterval(moveRoad, 20);
     // alert(road);
 }
 
@@ -14,7 +15,11 @@ var myGameArea = {
         this.canvas.height = 700;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-    }
+    },
+
+    clear : function() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    },
 }
 
 class Block {
@@ -28,11 +33,18 @@ class Block {
     }
 
 
-      block_init(color) {
+      block_init(color, x0, y0) {
         this.context = myGameArea.context;
         this.color = color;
         this.context.fillStyle = color;
         this.context.fillRect(this.x0, this.y0, this.width, this.height);
+      }
+
+      block_move() {
+        this.context = myGameArea.context;
+        this.context.fillStyle = this.color;
+        this.y0 += 3;
+        this.context.fillRect(this.x0, this.y0, this.width, this.height);   
       }
 }
 
@@ -44,7 +56,8 @@ var myRoadArea = {
     columnsNum : 4,
     prop : 80, //percentage of one's in matrix
     blockMat : [],
-    
+    // context: myGameArea.context,
+
     initRoad : function() {
     this.binaryMat = this.randomRoad(this.prop);
     this.blockMat = this.randomRoad(this.prop);
@@ -60,19 +73,15 @@ var myRoadArea = {
 
     updateRoad : function() {
 
+        // alert(this)
         for (var i = 0; i < this.rowsNum; i++) {
             for(var j = 0; j < this.columnsNum; j++) {
                 let isRed = this.binaryMat[i][j];
-                // alert(isRed)
-                // let color_value = 0xFF0000*isRed;
-                // let color = color_value.toString();
-                // alert(color, color_value)
-                // this.blockMat[i][j].block_init(color);
                 if (isRed) {
                     this.blockMat[i][j].block_init("#FF0000");
                 }
                 else {
-                    this.blockMat[i][j].block_init("#000000");
+                    this.blockMat[i][j].block_init("#0000F0");
                 }
 
             }
@@ -80,6 +89,18 @@ var myRoadArea = {
         }
 
 
+
+    },
+
+    moveRoad : function() {
+        // alert(this)
+        // alert(this.rowsNum)
+        for (var i = 0; i < this.rowsNum; i++) {
+            for(var j = 0; j < this.columnsNum; j++) {
+                this.blockMat[i][j].block_move();
+            }
+            
+        }
 
     },
 
@@ -104,3 +125,7 @@ var myRoadArea = {
         }
 }
 
+function moveRoad() {
+    myGameArea.clear();
+    myRoadArea.moveRoad();
+}
