@@ -2,7 +2,7 @@
 
 function startGame() {
     myGameArea.start();
-    myRoadArea.init();
+    myRoadArea.initRoad();
     let road = myRoadArea.randomRoad(50)
     // alert(road);
 }
@@ -24,36 +24,17 @@ class Block {
         this.x0 = x0_;
         this.y0 = y0_;
         this.lines = [];
-        this.lineblocks();
+        // this.block_init("red")
     }
 
-    lineblocks() {
-        for (let i=0; i<this.height; i+=1) {
-        let new_line = new block_line(this.width, this.x0, this.y0+i);
-         this.lines.push(new_line);
-        }
-      }
 
       block_init(color) {
-        for (let i=0; i<this.height; i+=1) {
-            this.lines[i].init_line(color);
-            }
+        this.context = myGameArea.context;
+        this.context.fillStyle = "#FF0000";
+        this.context.fillRect(this.x0, this.y0, this.width, this.height);
       }
 }
 
-class block_line {
-    constructor(width_, x0_, y0_) {
-        this.width = width_;
-        this.x0 = x0_;
-        this.y0 = y0_;
-
-    }
-    init_line(color) {
-        this.context = myGameArea.context;
-        this.context.fillStyle = "#FF0000";
-        this.context.fillRect(this.x0, this.y0, this.width, 1);
-    }
-}
 
 
 var myRoadArea = {
@@ -61,13 +42,15 @@ var myRoadArea = {
     rowsNum : 8,
     columnsNum : 6,
     prop : 80, //percentage of one's in matrix
-    blockMat : [][]
-    mainBlock : new Block(90, 90, 100, 100),
+    binaryMat : [],
+    blockMat : [],
      initRoad : function() {
-        
-        for (var i = 0; i < rowsNum; i++) {
-            for(var i = 0; i < rowsNum; i++) {
-                myMat[i] = this.randomArray(prop);
+        this.binaryMat = this.randomRoad(80);
+        this.blockMat = this.binaryMat;
+        for (var i = 0; i < this.rowsNum; i++) {
+            for(var j = 0; j < this.columnsNum; j++) {
+                this.blockMat[i][j] = 
+                new Block(90+90*i, 90+90*j, 100, 100);
             }
             
             }
