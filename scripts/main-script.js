@@ -4,20 +4,20 @@ function startGame() {
     myGameArea.start();
     myRoadArea.initRoad();
     myRoadArea.updateRoad();
-    this.interval = setInterval(moveRoad, 20);
+    this.interval = setInterval(moveRoad, 10);
     // alert(road);
 }
 
 var myGameArea = {
     canvas : document.createElement("canvas"),
-    start : function() {
+    start() {
         this.canvas.width = 1440;
         this.canvas.height = 700;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
     },
 
-    clear : function() {
+    clear() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     },
 }
@@ -40,10 +40,10 @@ class Block {
         this.context.fillRect(this.x0, this.y0, this.width, this.height);
       }
 
-      block_move() {
+      block_move(speedY) {
         this.context = myGameArea.context;
         this.context.fillStyle = this.color;
-        this.y0 += 3;
+        this.y0 += 1;
         this.context.fillRect(this.x0, this.y0, this.width, this.height);   
       }
 }
@@ -52,28 +52,26 @@ class Block {
 
 var myRoadArea = {
 
-    rowsNum : 4,
-    columnsNum : 4,
-    prop : 80, //percentage of one's in matrix
+    shift : 0,
+    rowsNum : 8,
+    columnsNum : 6,
+    prop : 60, //percentage of one's in matrix
+    speedY : 1,
     blockMat : [],
-    // context: myGameArea.context,
 
-    initRoad : function() {
+    initRoad() {
     this.binaryMat = this.randomRoad(this.prop);
     this.blockMat = this.randomRoad(this.prop);
     for (var i = 0; i < this.rowsNum; i++) {
         for(var j = 0; j < this.columnsNum; j++) {
             this.blockMat[i][j] = 
-            new Block(100, 100, 90+100*i, 90+100*j, "");
+            new Block(100, 100, 300+100*i, -100+100*j, "");
         }
-        
         }
-
     },
 
-    updateRoad : function() {
+    updateRoad() {
 
-        // alert(this)
         for (var i = 0; i < this.rowsNum; i++) {
             for(var j = 0; j < this.columnsNum; j++) {
                 let isRed = this.binaryMat[i][j];
@@ -88,23 +86,23 @@ var myRoadArea = {
             
         }
 
-
-
     },
 
-    moveRoad : function() {
-        // alert(this)
-        // alert(this.rowsNum)
+    moveRoad() {
+
+        this.shift += this.speedY;
         for (var i = 0; i < this.rowsNum; i++) {
             for(var j = 0; j < this.columnsNum; j++) {
-                this.blockMat[i][j].block_move();
+                this.blockMat[i][j].block_move(this.speedY);
             }
-            
-        }
-
+            }
     },
 
-    randomArray : function (prop) {
+    addRoad() {
+        
+    },
+
+    randomArray(prop) {
         let myArray = [];
         let arrayMax = this.columnsNum;
         const Perc = 101;
@@ -114,7 +112,7 @@ var myRoadArea = {
         return myArray;
         },
 
-    randomRoad : function (prop) {
+    randomRoad(prop) {
         let myMat = [];
         let rowsNum = this.rowsNum;
         let columnsNum = this.columnsNum;
