@@ -4,7 +4,7 @@ function startGame() {
     myGameArea.start();
     myRoadArea.initRoad();
     myRoadArea.updateRoad();
-    this.interval = setInterval(moveRoad, 10);
+    setInterval(moveRoad, 10);
     // alert(road);
 }
 
@@ -23,28 +23,29 @@ var myGameArea = {
 }
 
 class Block {
-    constructor(width_, height_, x0_, y0_, color) {
-        this.height = height_;
-        this.width = width_;
-        this.x0 = x0_;
-        this.y0 = y0_;
+    constructor(width_, height_, row, column, color, roadHeight) {
+        this.row = row;
+        this.column = column;
+        this.blockY = height_;
+        this.blockX = width_;
         this.lines = [];
         this.color = color;
+        this.x0 = 300+this.blockX*this.column;
+        this.y0 = -roadHeight+this.blockY*this.row;
     }
 
 
-      block_init(color, y0) {
-        this.context = myGameArea.context;
+      block_draw(color, roadHeight) {
         this.color = color;
-        this.context.fillStyle = color;
-        this.context.fillRect(this.x0, this.y0, this.width, this.height);
+        this.context = myGameArea.context;
+        this.context.fillStyle = this.color;
+        // alert(this.color + this.x0 + this.y0)
+        this.context.fillRect(this.x0, this.y0, this.blockX, this.blockY);
       }
 
       block_move(speedY) {
-        this.context = myGameArea.context;
-        this.context.fillStyle = this.color;
         this.y0 += speedY;
-        this.context.fillRect(this.x0, this.y0, this.width, this.height);   
+        this.block_draw(this.color, 700);   
       }
 }
 
@@ -55,7 +56,7 @@ var myRoadArea = {
     shift : 0,
     rowsNum : 14,
     columnsNum : 6,
-    prop : 60, //percentage of one's in matrix
+    prop : 80, //percentage of one's in matrix
     speedY : 1,
     blockY : 100,
     blockX : 100,
@@ -74,7 +75,7 @@ var myRoadArea = {
             for(var j = 0; j < this.columnsNum; j++) {
                 this.blockMat[i][j] = 
                 new Block(this.blockX, this.blockY, 
-                    300+this.blockX*j, -this.roadHeight+this.blockY*i, "");
+                    i, j, "", this.roadHeight);
             }
             }
 
@@ -82,10 +83,10 @@ var myRoadArea = {
             for(var j = 0; j < this.columnsNum; j++) {
                 let isRed = this.binaryMat[i][j];
                 if (isRed) {
-                    this.blockMat[i][j].block_init("#FF0000");
+                    this.blockMat[i][j].block_draw("#FF0000", this.roadHeight);
                 }
                 else {
-                    this.blockMat[i][j].block_init("#0000F0");
+                    this.blockMat[i][j].block_draw("#0000F0", this.roadHeight);
                 }
 
             }
@@ -119,7 +120,6 @@ var myRoadArea = {
         for (var i = rowsNum/2; i < rowsNum; i++) {
             this.binaryMat[i-rowsNum/2] = this.randomArray(this.prop);
         }
-        // this.initRoad();
         this.updateRoad();
     },
 
