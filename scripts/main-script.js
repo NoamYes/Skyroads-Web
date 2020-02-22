@@ -33,7 +33,7 @@ class Block {
     }
 
 
-      block_init(color, x0, y0) {
+      block_init(color, y0) {
         this.context = myGameArea.context;
         this.color = color;
         this.context.fillStyle = color;
@@ -43,7 +43,7 @@ class Block {
       block_move(speedY) {
         this.context = myGameArea.context;
         this.context.fillStyle = this.color;
-        this.y0 += 1;
+        this.y0 += speedY;
         this.context.fillRect(this.x0, this.y0, this.width, this.height);   
       }
 }
@@ -53,24 +53,30 @@ class Block {
 var myRoadArea = {
 
     shift : 0,
-    rowsNum : 8,
+    rowsNum : 14,
     columnsNum : 6,
     prop : 60, //percentage of one's in matrix
     speedY : 1,
+    blockY : 100,
+    blockX : 100,
+    roadHeight : 700,
     blockMat : [],
 
     initRoad() {
     this.binaryMat = this.randomRoad(this.prop);
     this.blockMat = this.randomRoad(this.prop);
-    for (var i = 0; i < this.rowsNum; i++) {
-        for(var j = 0; j < this.columnsNum; j++) {
-            this.blockMat[i][j] = 
-            new Block(100, 100, 300+100*i, -100+100*j, "");
-        }
-        }
+
     },
 
     updateRoad() {
+
+        for (var i = 0; i < this.rowsNum; i++) {
+            for(var j = 0; j < this.columnsNum; j++) {
+                this.blockMat[i][j] = 
+                new Block(this.blockX, this.blockY, 
+                    300+this.blockX*j, -this.roadHeight+this.blockY*i, "");
+            }
+            }
 
         for (var i = 0; i < this.rowsNum; i++) {
             for(var j = 0; j < this.columnsNum; j++) {
@@ -89,17 +95,32 @@ var myRoadArea = {
     },
 
     moveRoad() {
+        if(this.shift == this.roadHeight) {
+            this.addRoad();
+            this.shift = 0;
+        }
+        else{ 
+            this.shift += this.speedY;
+            for (var i = 0; i < this.rowsNum; i++) {
+                for(var j = 0; j < this.columnsNum; j++) {
+                    this.blockMat[i][j].block_move(this.speedY);
+                }
+                }
+        }
 
-        this.shift += this.speedY;
-        for (var i = 0; i < this.rowsNum; i++) {
-            for(var j = 0; j < this.columnsNum; j++) {
-                this.blockMat[i][j].block_move(this.speedY);
-            }
-            }
     },
 
     addRoad() {
-        
+        let rowsNum = this.rowsNum;
+        let columnsNum = this.columnsNum;
+        for (var i = 0; i < rowsNum/2; i++) {
+            this.binaryMat[i+rowsNum/2] = this.binaryMat[i];
+        }
+        for (var i = rowsNum/2; i < rowsNum; i++) {
+            this.binaryMat[i-rowsNum/2] = this.randomArray(this.prop);
+        }
+        // this.initRoad();
+        this.updateRoad();
     },
 
     randomArray(prop) {
