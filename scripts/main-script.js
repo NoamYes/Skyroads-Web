@@ -54,16 +54,18 @@ class Block {
 var myRoadArea = {
 
     shift : 0,
+    base1 : 600,
+    base2 : 700,
     rowsNum : 14,
     columnsNum : 6,
-    prop : 80, //percentage of one's in matrix
+    prop : 70, //percentage of one's in matrix
     speedY : 1,
-    blockY : 100,
-    blockX : 100,
     roadHeight : 700,
     blockMat : [],
 
     initRoad() {
+    this.blockX = this.base1/this.columnsNum;
+    this.blockY = 2*this.base2/this.rowsNum;
     this.binaryMat = this.randomRoad(this.prop);
     this.blockMat = this.randomRoad(this.prop);
 
@@ -86,7 +88,7 @@ var myRoadArea = {
                     this.blockMat[i][j].block_draw("#FF0000", this.roadHeight);
                 }
                 else {
-                    this.blockMat[i][j].block_draw("#0000F0", this.roadHeight);
+                    this.blockMat[i][j].block_draw("#000000", this.roadHeight);
                 }
 
             }
