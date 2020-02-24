@@ -4,7 +4,7 @@ function startGame() {
     myGameArea.start();
     myRoadArea.initRoad();
     myRoadArea.updateRoad();
-    // setInterval(moveRoad, 10);
+    setInterval(moveRoad, 10);
     // alert(road);
 }
 
@@ -12,7 +12,7 @@ var myGameArea = {
     canvas : document.createElement("canvas"),
     start() {
         this.canvas.width = 1440;
-        this.canvas.height = 700;
+        this.canvas.height = 800;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
     },
@@ -30,52 +30,56 @@ class Block {
         this.blockX = width_;
         this.lines = [];
         this.color = color;
-        this.x0 = myRoadArea.xb1+this.blockX*this.column;
-        this.y0 = myRoadArea.yb1+this.blockY*this.row;
+        this.x0 = this.blockX*this.column;
+        this.y0 = this.blockY*this.row;
     }
 
 
       block_draw(color, roadHeight) {
 
-        let xView = myRoadArea.xb1 +  (myRoadArea.base1)/2;
-        // let C = [xView, myRoadArea.roadHeight+200 ,myRoadArea.roadHeight/2]
-        let C = [xView, myRoadArea.roadHeight ,myRoadArea.roadHeight/2]
-        let P1 = this.leftup = [this.x0, this.y0, 0];
-        let P2 = this.rightup = [this.x0+this.blockX, this.y0, 0];
-        let P3 = this.leftdown = [this.x0, this.y0+this.blockY, 0];
-        let P4 = this.rightup = [this.x0+this.blockX, this.y0+this.blockY, 0];
-        let sqrt2 = math.sqrt(2)/2;
-        let M = math.matrix([[1,0,0], [0, sqrt2, sqrt2], [0, -sqrt2, sqrt2]])
-        let D1 = math.multiply(M,math.subtract(P1,C))
-        let D2 = math.multiply(M,math.subtract(P2,C))
-        let D3 = math.multiply(M,math.subtract(P3,C))
-        let D4 = math.multiply(M,math.subtract(P4,C))
-        let E = [700, 0, myRoadArea.base1];
-        let K = math.matrix([[1, 0, E[0]/E[2]], [0, 1, E[1]/E[2]], [0, 0, 1/E[2]]]);
-        let F1 = math.multiply(K,D1);
-        let F2 = math.multiply(K,D2);
-        let F3 = math.multiply(K,D3);
-        let F4 = math.multiply(K,D4);
-        let B1 = [F1.get([0])/F1.get([2]), F1.get([1])/F1.get([2])];
-        let B2 = [F2.get([0])/F2.get([2]), F2.get([1])/F2.get([2])];
-        let B3 = [F3.get([0])/F3.get([2]), F3.get([1])/F3.get([2])];
-        let B4 = [F4.get([0])/F4.get([2]), F4.get([1])/F4.get([2])];
+        let b1 = 300;
+        let b2 = 300;
+        let height = 500;
+        let wb = b1;
+        let wt = b2;
+        let h = height;
+        let xt = 300;
+        let top_left = [xt, h];
+        let A1 = [[wb*wt, wb*xt],[0, wb*h]];
+        let rNum = myRoadArea.rowsNum;
+        let cNum = myRoadArea.columnsNum;
+        let blockX = wb/cNum;
+        let blockY = blockX;
+
+        let P1 = [this.x0, this.y0];
+        let P2 = [this.x0, this.y0+blockY];
+        let P3 = [this.x0+blockX, this.y0+blockY];
+        let P4 = [this.x0+blockX, this.y0];
+
+        let B1 = math.divide(math.multiply(A1, P1), this.denominator(P1[1]));
+        let B2 = math.divide(math.multiply(A1, P2), this.denominator(P2[1]));
+        let B3 = math.divide(math.multiply(A1, P3), this.denominator(P3[1]));
+        let B4 = math.divide(math.multiply(A1, P4), this.denominator(P4[1]));
 
         this.color = color;
         this.context = myGameArea.context;
         this.context.fillStyle = this.color;
         this.context.beginPath();
-        this.context.moveTo(B1[0],B1[1]);
-        this.context.lineTo(B2[0],B2[1]);
-        this.context.lineTo(B3[0],B3[1]);
-        // this.context.lineTo(0, 90);
+        this.context.moveTo(myRoadArea.xb1+B1[0],800-B1[1]);
+        this.context.lineTo(myRoadArea.xb1+B2[0],800-B2[1]);
+        this.context.lineTo(myRoadArea.xb1+B3[0],800-B3[1]);
+        this.context.lineTo(myRoadArea.xb1+B4[0], 800-B4[1]);
         this.context.closePath();
         this.context.fill();
       }
 
       block_move(speedY) {
-        this.y0 += speedY;
+        this.y0 -= speedY;
         this.block_draw(this.color, 700);   
+      }
+
+      denominator(y) {
+        return (100-y)*300+y*600
       }
 }
 
@@ -84,20 +88,21 @@ class Block {
 var myRoadArea = {
 
     shift : 0,
-    base1 : 400,
-    base2 : 400,
+    base1 : 300,
+    base2 : 300,
     xb1 : 300,
     yb1 : 0,
-    roadHeight : 700,
-    rowsNum : 3,
-    columnsNum : 2,
+    roadHeight : 500,
+    rowsNum : 18,
+    columnsNum : 6,
     prop : 70, //percentage of one's in matrix
     speedY : 1,
     blockMat : [],
 
     initRoad() {
     this.blockX = this.base1/this.columnsNum;
-    this.blockY = 2*this.base2/this.rowsNum;
+    // this.blockY = 2*this.base2/this.rowsNum;
+    this.blockY = this.blockX;
     this.binaryMat = this.randomRoad(this.prop);
     this.blockMat = this.randomRoad(this.prop);
 
@@ -130,7 +135,8 @@ var myRoadArea = {
     },
 
     moveRoad() {
-        if(this.shift == this.roadHeight) {
+
+        if(this.shift == this.rowsNum*this.blockY/2) {
             this.addRoad();
             this.shift = 0;
         }
@@ -145,14 +151,15 @@ var myRoadArea = {
 
     },
 
+
     addRoad() {
         let rowsNum = this.rowsNum;
         let columnsNum = this.columnsNum;
         for (var i = 0; i < rowsNum/2; i++) {
-            this.binaryMat[i+rowsNum/2] = this.binaryMat[i];
+            this.binaryMat[i] = this.binaryMat[i+rowsNum/2];
         }
         for (var i = rowsNum/2; i < rowsNum; i++) {
-            this.binaryMat[i-rowsNum/2] = this.randomArray(this.prop);
+            this.binaryMat[i] = this.randomArray(this.prop);
         }
         this.updateRoad();
     },
