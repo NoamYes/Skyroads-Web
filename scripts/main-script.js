@@ -4,7 +4,7 @@ function startGame() {
     myGameArea.start();
     myRoadArea.initRoad();
     myRoadArea.updateRoad();
-    setInterval(moveRoad, 10);
+    // setInterval(moveRoad, 10);
     // alert(road);
 }
 
@@ -30,17 +30,47 @@ class Block {
         this.blockX = width_;
         this.lines = [];
         this.color = color;
-        this.x0 = 300+this.blockX*this.column;
-        this.y0 = -roadHeight+this.blockY*this.row;
+        this.x0 = myRoadArea.xb1+this.blockX*this.column;
+        this.y0 = myRoadArea.yb1+this.blockY*this.row;
     }
 
 
       block_draw(color, roadHeight) {
+
+        let xView = myRoadArea.xb1 +  (myRoadArea.base1)/2;
+        // let C = [xView, myRoadArea.roadHeight+200 ,myRoadArea.roadHeight/2]
+        let C = [xView, myRoadArea.roadHeight ,myRoadArea.roadHeight/2]
+        let P1 = this.leftup = [this.x0, this.y0, 0];
+        let P2 = this.rightup = [this.x0+this.blockX, this.y0, 0];
+        let P3 = this.leftdown = [this.x0, this.y0+this.blockY, 0];
+        let P4 = this.rightup = [this.x0+this.blockX, this.y0+this.blockY, 0];
+        let sqrt2 = math.sqrt(2)/2;
+        let M = math.matrix([[1,0,0], [0, sqrt2, sqrt2], [0, -sqrt2, sqrt2]])
+        let D1 = math.multiply(M,math.subtract(P1,C))
+        let D2 = math.multiply(M,math.subtract(P2,C))
+        let D3 = math.multiply(M,math.subtract(P3,C))
+        let D4 = math.multiply(M,math.subtract(P4,C))
+        let E = [700, 0, myRoadArea.base1];
+        let K = math.matrix([[1, 0, E[0]/E[2]], [0, 1, E[1]/E[2]], [0, 0, 1/E[2]]]);
+        let F1 = math.multiply(K,D1);
+        let F2 = math.multiply(K,D2);
+        let F3 = math.multiply(K,D3);
+        let F4 = math.multiply(K,D4);
+        let B1 = [F1.get([0])/F1.get([2]), F1.get([1])/F1.get([2])];
+        let B2 = [F2.get([0])/F2.get([2]), F2.get([1])/F2.get([2])];
+        let B3 = [F3.get([0])/F3.get([2]), F3.get([1])/F3.get([2])];
+        let B4 = [F4.get([0])/F4.get([2]), F4.get([1])/F4.get([2])];
+
         this.color = color;
         this.context = myGameArea.context;
         this.context.fillStyle = this.color;
-        // alert(this.color + this.x0 + this.y0)
-        this.context.fillRect(this.x0, this.y0, this.blockX, this.blockY);
+        this.context.beginPath();
+        this.context.moveTo(B1[0],B1[1]);
+        this.context.lineTo(B2[0],B2[1]);
+        this.context.lineTo(B3[0],B3[1]);
+        // this.context.lineTo(0, 90);
+        this.context.closePath();
+        this.context.fill();
       }
 
       block_move(speedY) {
@@ -54,11 +84,13 @@ class Block {
 var myRoadArea = {
 
     shift : 0,
-    base1 : 600,
-    base2 : 700,
+    base1 : 400,
+    base2 : 400,
+    xb1 : 300,
+    yb1 : 0,
     roadHeight : 700,
-    rowsNum : 14,
-    columnsNum : 6,
+    rowsNum : 3,
+    columnsNum : 2,
     prop : 70, //percentage of one's in matrix
     speedY : 1,
     blockMat : [],
@@ -151,18 +183,3 @@ function moveRoad() {
     myRoadArea.moveRoad();
 }
 
-function line_intersect(x1, y1, x2, y2, x3, y3, x4, y4)
-{
-    var ua, ub, denom = (y4 - y3)*(x2 - x1) - (x4 - x3)*(y2 - y1);
-    if (denom == 0) {
-        return null;
-    }
-    ua = ((x4 - x3)*(y1 - y3) - (y4 - y3)*(x1 - x3))/denom;
-    ub = ((x2 - x1)*(y1 - y3) - (y2 - y1)*(x1 - x3))/denom;
-    return {
-        x: x1 + ua * (x2 - x1),
-        y: y1 + ua * (y2 - y1),
-        seg1: ua >= 0 && ua <= 1,
-        seg2: ub >= 0 && ub <= 1
-    };
-}
