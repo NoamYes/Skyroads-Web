@@ -5,7 +5,6 @@ function startGame() {
     myRoadArea.initRoad();
     myRoadArea.updateRoad();
     setInterval(moveRoad, 10);
-    // alert(road);
 }
 
 var myGameArea = {
@@ -22,6 +21,7 @@ var myGameArea = {
     },
 }
 
+
 class Block {
     constructor(width_, height_, row, column, color, roadHeight) {
         this.row = row;
@@ -35,7 +35,7 @@ class Block {
     }
 
 
-      block_draw(color, roadHeight) {
+      block_draw(color) {
 
         let b1 = 300;
         let b2 = 300;
@@ -76,7 +76,7 @@ class Block {
 
       block_move(speedY) {
         this.y0 -= speedY;
-        this.block_draw(this.color, 700);   
+        this.block_draw(this.color);   
       }
 
       denominator(y) {
@@ -94,7 +94,7 @@ var myRoadArea = {
     xb1 : 300,
     yb1 : 0,
     roadHeight : 500,
-    rowsNum : 18,
+    rowsNum : 20,
     columnsNum : 6,
     prop : 70, //percentage of one's in matrix
     speedY : 1,
