@@ -71,6 +71,7 @@ class Block {
         this.context.lineTo(myRoadArea.xb1+B4[0], 800-B4[1]);
         this.context.closePath();
         this.context.fill();
+        this.context.stroke();
       }
 
       block_move(speedY) {
@@ -125,7 +126,7 @@ var myRoadArea = {
                     this.blockMat[i][j].block_draw("#FF0000", this.roadHeight);
                 }
                 else {
-                    this.blockMat[i][j].block_draw("#000000", this.roadHeight);
+                    this.blockMat[i][j].block_draw("#669999", this.roadHeight);
                 }
 
             }
