@@ -2,7 +2,7 @@
 var mySpaceship;
 
 function startGame() {
-    mySpaceship.constructor(100, 100, "images/Fighter_jet.png", 500, 700, "image");
+    mySpaceship.constructor(120, 120, "images/Fighter_jet.png", 500, 700, "image");
     myGameArea.start();
     myRoadArea.initRoad();
     myRoadArea.updateRoad();
@@ -32,9 +32,22 @@ var mySpaceship = {
         this.width = width;
         this.height = height;
         this.speedX = 0;
-        this.speedY = 0;    
+        this.speedY = 0;
+        this.gravity = 0.05;
+        this.gravitySpeed = 0; 
+        this.bounce = 0;    
+        this.jumpHeight = 120;
+        this.isJumping = false;   
         this.x = x;
-        this.y = y;    
+        this.y0 = y;   
+        this.y = y; 
+        this.hitBottom = function() {
+            var rockbottom = myGameArea.canvas.height - this.height;
+            if (this.y > rockbottom) {
+                this.y = rockbottom;
+                this.gravitySpeed = -(this.gravitySpeed * this.bounce);
+            }
+        }
     
     },
 
@@ -44,26 +57,38 @@ var mySpaceship = {
             this.x, 
             this.y,
             this.width, this.height);
+        this.gravitySpeed += this.gravity;
         this.x += this.speedX;
-        this.y += this.speedY; 
+        this.y += this.speedY+this.gravitySpeed;
+        let diffY = mySpaceship.y0 - this.y;
+        if(diffY >= this.jumpHeight && this.isJumping) {
+            this.speedY = 0;
+            this.isJumping = false; 
+        }
+        this.hitBottom();
+
     } ,
 
     moveleft() {
-        mySpaceship.speedX = -3; 
+        this.speedX = -3; 
     },
     
     moveright() {
-        mySpaceship.speedX = 3; 
+        this.speedX = 3; 
     },
     
     jump() {
-    
+        this.isJumping = true;
+        this.speedY = -10;
+
     },
     
     clearmove() {
-        mySpaceship.speedX = 0; 
-    }
+        // debugger;
+        this.speedX = 0; 
+    },
     
+
 }
 
 
@@ -128,7 +153,6 @@ class Block {
         return (100-y)*300+y*600
       }
 }
-
 
 
 var myRoadArea = {
@@ -240,7 +264,7 @@ function moveRoad() {
 
 
 window.addEventListener("keydown", moveSelection);
-window.addEventListener("keyup", mySpaceship.clearmove);
+window.addEventListener("keyup", () => mySpaceship.clearmove());
 
 function moveSelection(event) {  
     switch (event.keyCode) {
@@ -250,6 +274,10 @@ function moveSelection(event) {
 
         case 39:
             mySpaceship.moveright();
+        break;
+
+        case 32:
+            mySpaceship.jump();
         break;
     }
     event.preventDefault();
