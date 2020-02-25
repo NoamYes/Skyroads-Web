@@ -83,10 +83,31 @@ var mySpaceship = {
 
     },
     
-    clearmove() {
-        // debugger;
-        this.speedX = 0; 
+    clearmove(e) {
+        if (!this.isJumping) {
+            this.speedX = 0; 
+        } 
+
     },
+
+    crashWith(otherobj) {
+        var myleft = this.x;
+        var myright = this.x + (this.width);
+        var mytop = this.y;
+        var mybottom = this.y + (this.height);
+        var otherleft = otherobj.x;
+        var otherright = otherobj.x + (otherobj.width);
+        var othertop = otherobj.y;
+        var otherbottom = otherobj.y + (otherobj.height);
+        var crash = true;
+        if ((mybottom < othertop) ||
+        (mytop > otherbottom) ||
+        (myright < otherleft) ||
+        (myleft > otherright)) {
+          crash = false;
+        }
+        return crash;
+      }
     
 
 }
@@ -126,10 +147,10 @@ class Block {
         let P3 = [this.x0+blockX, this.y0+blockY];
         let P4 = [this.x0+blockX, this.y0];
 
-        let B1 = math.divide(math.multiply(A1, P1), this.denominator(P1[1]));
-        let B2 = math.divide(math.multiply(A1, P2), this.denominator(P2[1]));
-        let B3 = math.divide(math.multiply(A1, P3), this.denominator(P3[1]));
-        let B4 = math.divide(math.multiply(A1, P4), this.denominator(P4[1]));
+        let B1 = this.b_left = math.divide(math.multiply(A1, P1), this.denominator(P1[1]));
+        let B2 = this.t_left = math.divide(math.multiply(A1, P2), this.denominator(P2[1]));
+        let B3 = this.t_right = math.divide(math.multiply(A1, P3), this.denominator(P3[1]));
+        let B4 = this.b_right = math.divide(math.multiply(A1, P4), this.denominator(P4[1]));
 
         this.color = color;
         this.context = myGameArea.context;
@@ -264,7 +285,7 @@ function moveRoad() {
 
 
 window.addEventListener("keydown", moveSelection);
-window.addEventListener("keyup", () => mySpaceship.clearmove());
+window.addEventListener("keyup", (event) => mySpaceship.clearmove(event));
 
 function moveSelection(event) {  
     switch (event.keyCode) {
