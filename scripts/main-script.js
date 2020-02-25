@@ -33,7 +33,7 @@ var mySpaceship = {
         this.height = height;
         this.speedX = 0;
         this.speedY = 0;
-        this.gravity = 0.05;
+        this.gravity = 0.18;
         this.gravitySpeed = 0; 
         this.bounce = 0;    
         this.jumpHeight = 120;
@@ -45,7 +45,9 @@ var mySpaceship = {
             var rockbottom = myGameArea.canvas.height - this.height;
             if (this.y > rockbottom) {
                 this.y = rockbottom;
+                this.isJumping = false;
                 this.gravitySpeed = -(this.gravitySpeed * this.bounce);
+                this.speedY = 0;
             }
         }
     
@@ -61,10 +63,9 @@ var mySpaceship = {
         this.x += this.speedX;
         this.y += this.speedY+this.gravitySpeed;
         let diffY = mySpaceship.y0 - this.y;
-        if(diffY >= this.jumpHeight && this.isJumping) {
-            this.speedY = 0;
-            this.isJumping = false; 
-        }
+        // if(diffY >= this.jumpHeight && this.isJumping) {
+        //     this.speedY = 0;
+        // }
         this.hitBottom();
 
     } ,
@@ -79,12 +80,12 @@ var mySpaceship = {
     
     jump() {
         this.isJumping = true;
-        this.speedY = -10;
+        this.speedY = -6;
 
     },
     
     clearmove(e) {
-        if (!this.isJumping) {
+        if (e.keyCode != 32) {
             this.speedX = 0; 
         } 
 
