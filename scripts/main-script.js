@@ -2,7 +2,7 @@
 var mySpaceship;
 
 function startGame() {
-    mySpaceship = new component(100, 100, "images/Fighter_jet.png", 500, 700, "image");
+    mySpaceship.constructor(100, 100, "images/Fighter_jet.png", 500, 700, "image");
     myGameArea.start();
     myRoadArea.initRoad();
     myRoadArea.updateRoad();
@@ -23,40 +23,49 @@ var myGameArea = {
     },
 }
 
-function component(width, height, color, x, y, type) {
-    this.type = type;
-    if (type == "image") {
+
+var mySpaceship = {
+
+    constructor(width, height, color, x, y) {
         this.image = new Image();
         this.image.src = color;
-    }
-    this.width = width;
-    this.height = height;
-    this.speedX = 0;
-    this.speedY = 0;    
-    this.x = x;
-    this.y = y;    
-    this.update = function() {
-        let ctx = myGameArea.context;
-        if (type == "image") {            
-            // this.image.onload = function(){
-                myGameArea.context.drawImage(this.image, 
-                    this.x, 
-                    this.y,
-                    this.width, this.height);
-                
-            // }
+        this.width = width;
+        this.height = height;
+        this.speedX = 0;
+        this.speedY = 0;    
+        this.x = x;
+        this.y = y;    
+    
+    },
 
-        } else {
-            ctx.fillStyle = color;
-            ctx.fillRect(this.x, this.y, this.width, this.height);
-        }
+    update() {
+        let ctx = myGameArea.context;         
+        myGameArea.context.drawImage(this.image, 
+            this.x, 
+            this.y,
+            this.width, this.height);
         this.x += this.speedX;
         this.y += this.speedY; 
+    } ,
+
+    moveleft() {
+        mySpaceship.speedX = -3; 
+    },
+    
+    moveright() {
+        mySpaceship.speedX = 3; 
+    },
+    
+    jump() {
+    
+    },
+    
+    clearmove() {
+        mySpaceship.speedX = 0; 
     }
     
-       
-
 }
+
 
 class Block {
     constructor(width_, height_, row, column, color, roadHeight) {
@@ -228,31 +237,19 @@ function moveRoad() {
     myRoadArea.moveRoad();
 }
 
-function moveleft() {
-    mySpaceship.speedX = -3; 
-}
-
-function moveright() {
-    mySpaceship.speedX = 3; 
-}
-
-function clearmove() {
-    mySpaceship.speedX = 0; 
-}
-
 
 
 window.addEventListener("keydown", moveSelection);
-window.addEventListener("keyup", clearmove);
+window.addEventListener("keyup", mySpaceship.clearmove);
 
 function moveSelection(event) {  
     switch (event.keyCode) {
         case 37:
-            moveleft();
+            mySpaceship.moveleft();
         break;
 
         case 39:
-            moveright();
+            mySpaceship.moveright();
         break;
     }
     event.preventDefault();
