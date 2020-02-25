@@ -50,11 +50,12 @@ function component(width, height, color, x, y, type) {
             ctx.fillStyle = color;
             ctx.fillRect(this.x, this.y, this.width, this.height);
         }
-    }
-    this.newPos = function() {
         this.x += this.speedX;
-        this.y += this.speedY;        
+        this.y += this.speedY; 
     }
+    
+       
+
 }
 
 class Block {
@@ -227,3 +228,32 @@ function moveRoad() {
     myRoadArea.moveRoad();
 }
 
+function moveleft() {
+    mySpaceship.speedX = -3; 
+}
+
+function moveright() {
+    mySpaceship.speedX = 3; 
+}
+
+function clearmove() {
+    mySpaceship.speedX = 0; 
+}
+
+
+
+window.addEventListener("keydown", moveSelection);
+window.addEventListener("keyup", clearmove);
+
+function moveSelection(event) {  
+    switch (event.keyCode) {
+        case 37:
+            moveleft();
+        break;
+
+        case 39:
+            moveright();
+        break;
+    }
+    event.preventDefault();
+};
