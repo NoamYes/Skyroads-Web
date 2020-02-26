@@ -206,7 +206,7 @@ class Block {
       }
 
       denominator(y) {
-        return (100-y)*200+y*600
+        return (100-y)*350+y*600
       }
 }
 
@@ -262,7 +262,7 @@ var myRoadArea = {
 
     moveRoad() {
 
-        if(this.shift == this.rowsNum*this.blockY/2) {
+        if(this.shift >= this.rowsNum*this.blockY/2) {
             this.addRoad();
             this.shift = 0;
         }
@@ -332,6 +332,18 @@ window.addEventListener('keydown', function (e) {
     }
     });
 
+window.addEventListener('keydown', function (e) {
+    var key = e.keyCode;
+    if (key === 38)// up key
+    {
+        speedUP();
+    }
+    if (key === 40)// down key
+    {
+        speedDOWN();
+    }
+    });
+
 function moveSelection(event) {  
     switch (event.keyCode) {
         case 37:
@@ -359,4 +371,16 @@ function togglePause()
        paused= false;
     }
 
+}
+
+function speedUP() {
+    if (myRoadArea.speedY < 10) {
+        myRoadArea.speedY+= 1;
+    }
+}
+
+function speedDOWN() {
+    if (myRoadArea.speedY > 1) {
+        myRoadArea.speedY-= 1;
+    }
 }
