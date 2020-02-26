@@ -12,7 +12,7 @@ function startGame() {
 var myGameArea = {
     canvas : document.createElement("canvas"),
     start() {
-        this.canvas.width = 1440;
+        this.canvas.width = 2440;
         this.canvas.height = 800;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
@@ -38,7 +38,7 @@ var mySpaceship = {
         this.bounce = 0;    
         this.jumpHeight = 120;
         this.isJumping = false;  
-        this.hitSensitivity = 100; 
+        this.hitSensitivity = 5; 
         this.x = x;
         this.y0 = y;   
         this.y = y; 
@@ -65,17 +65,10 @@ var mySpaceship = {
         ctx.translate(-x, -y); 
         ctx.drawImage(this.image,x,y,w,h);
         ctx.restore();
-        // ctx.drawImage(this.image, 
-        //     this.x, 
-        //     this.y,
-        //     this.width, this.height);
         this.gravitySpeed += this.gravity;
         this.x += this.speedX;
         this.y += this.speedY+this.gravitySpeed;
         let diffY = mySpaceship.y0 - this.y;
-        // if(diffY >= this.jumpHeight && this.isJumping) {
-        //     this.speedY = 0;
-        // }
         this.hitBottom();
 
     } ,
@@ -111,21 +104,30 @@ var mySpaceship = {
         let upRight = block.t_right;
         let downRight = block.b_right;
         var crash = false;
-        if (downRight[0] - myleft > this.hitSensitivity ||
-             myright - downLeft[0] > this.hitSensitivity) {
+        let left_limit = (downRight[0] - myleft > this.hitSensitivity) &&
+        (downRight[0] - myleft < this.width);
+
+        let right_limit = (myright - downLeft[0] > this.hitSensitivity) &&
+            (myright - downLeft[0] < this.width); 
+        let vert_condition = Math.abs(mybottom - upRight[1]) < this.height/2;
+        if ((left_limit && vert_condition) || 
+            (right_limit && vert_condition)) {
                 crash = true;
-             }
-            //  myright - MyLeft > this.hitSensitivity ||
-            //  my
-        return crash;
+            }
+             
+            return crash;
       },
 
       isHit() {
-        for(var j = 0; j < myRoadArea.columnsNum; j++) {
-            let rNum = myRoadArea.rowsNum;
-            let isRed = myRoadArea.blockMat[rNum-1][j].isRed;
-            if(this.crashWith(myRoadArea.blockMat[rNum-1][j]) && isRed) {
-                alert('Hit')
+        if (!this.isJumping) {
+            for (var i = 0; i < myRoadArea.rowsNum; i++) { 
+                for(var j = 0; j < myRoadArea.columnsNum; j++) {
+                    let rNum = myRoadArea.rowsNum;
+                    let isRed = myRoadArea.blockMat[i][j].isRed;
+                    if(this.crashWith(myRoadArea.blockMat[i][j]) && isRed) {
+                        alert('Hit')
+                    }
+                }
             }
         }
       }
@@ -179,20 +181,27 @@ class Block {
         this.isRed = color == "#FF0000";
         this.context = myGameArea.context;
         this.context.fillStyle = this.color;
-        this.context.beginPath();
-        this.context.moveTo(myRoadArea.xb1+B1[0],800-B1[1]);
-        this.context.lineTo(myRoadArea.xb1+B2[0],800-B2[1]);
-        this.context.lineTo(myRoadArea.xb1+B3[0],800-B3[1]);
-        this.context.lineTo(myRoadArea.xb1+B4[0], 800-B4[1]);
-        this.context.closePath();
-        this.context.fill();
-        this.context.strokeStyle = "#000000";
-        this.context.stroke();
+        let CanvasHeight = myGameArea.canvas.height;
+        // if(this.y0 < myRoadArea.roadHeight) {
+            this.context.beginPath();
+            this.context.moveTo(myRoadArea.xb1+B1[0],CanvasHeight-B1[1]);
+            this.context.lineTo(myRoadArea.xb1+B2[0],CanvasHeight-B2[1]);
+            this.context.lineTo(myRoadArea.xb1+B3[0],CanvasHeight-B3[1]);
+            this.context.lineTo(myRoadArea.xb1+B4[0], CanvasHeight-B4[1]);
+            this.context.closePath();
+            this.context.fill();
+            this.context.strokeStyle = "#000000";
+            this.context.stroke();
+        // } 
+
       }
 
       block_move(speedY) {
         this.y0 -= speedY;
-        this.block_draw(this.color);   
+        if (this.y0 > -this.blockY) {
+            this.block_draw(this.color)
+        }
+;   
       }
 
       denominator(y) {
