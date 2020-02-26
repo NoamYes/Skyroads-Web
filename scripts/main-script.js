@@ -37,7 +37,8 @@ var mySpaceship = {
         this.gravitySpeed = 0; 
         this.bounce = 0;    
         this.jumpHeight = 120;
-        this.isJumping = false;   
+        this.isJumping = false;  
+        this.hitSensitivity = 100; 
         this.x = x;
         this.y0 = y;   
         this.y = y; 
@@ -54,11 +55,20 @@ var mySpaceship = {
     },
 
     update() {
-        let ctx = myGameArea.context;         
-        myGameArea.context.drawImage(this.image, 
-            this.x, 
-            this.y,
-            this.width, this.height);
+        let ctx = myGameArea.context;   
+        let x = this.x, y = this.y, w = this.width, h = this.height;
+        ctx.save();
+        ctx.translate(this.x,this.y);
+        let diffX = this.x - 600;
+        this.angle = Math.asin(diffX/myGameArea.canvas.height);
+        ctx.rotate(-this.angle);
+        ctx.translate(-x, -y); 
+        ctx.drawImage(this.image,x,y,w,h);
+        ctx.restore();
+        // ctx.drawImage(this.image, 
+        //     this.x, 
+        //     this.y,
+        //     this.width, this.height);
         this.gravitySpeed += this.gravity;
         this.x += this.speedX;
         this.y += this.speedY+this.gravitySpeed;
@@ -91,24 +101,36 @@ var mySpaceship = {
 
     },
 
-    crashWith(otherobj) {
+    crashWith(block) {
         var myleft = this.x;
         var myright = this.x + (this.width);
         var mytop = this.y;
         var mybottom = this.y + (this.height);
-        var otherleft = otherobj.x;
-        var otherright = otherobj.x + (otherobj.width);
-        var othertop = otherobj.y;
-        var otherbottom = otherobj.y + (otherobj.height);
-        var crash = true;
-        if ((mybottom < othertop) ||
-        (mytop > otherbottom) ||
-        (myright < otherleft) ||
-        (myleft > otherright)) {
-          crash = false;
-        }
+        let upLeft = block.t_left;
+        let downLeft = block.b_left;
+        let upRight = block.t_right;
+        let downRight = block.b_right;
+        var crash = false;
+        if (downRight[0] - myleft > this.hitSensitivity ||
+             myright - downLeft[0] > this.hitSensitivity) {
+                crash = true;
+             }
+            //  myright - MyLeft > this.hitSensitivity ||
+            //  my
         return crash;
+      },
+
+      isHit() {
+        for(var j = 0; j < myRoadArea.columnsNum; j++) {
+            let rNum = myRoadArea.rowsNum;
+            let isRed = myRoadArea.blockMat[rNum-1][j].isRed;
+            if(this.crashWith(myRoadArea.blockMat[rNum-1][j]) && isRed) {
+                alert('Hit')
+            }
+        }
       }
+
+    
     
 
 }
@@ -148,12 +170,13 @@ class Block {
         let P3 = [this.x0+blockX, this.y0+blockY];
         let P4 = [this.x0+blockX, this.y0];
 
-        let B1 = this.b_left = math.divide(math.multiply(A1, P1), this.denominator(P1[1]));
-        let B2 = this.t_left = math.divide(math.multiply(A1, P2), this.denominator(P2[1]));
-        let B3 = this.t_right = math.divide(math.multiply(A1, P3), this.denominator(P3[1]));
-        let B4 = this.b_right = math.divide(math.multiply(A1, P4), this.denominator(P4[1]));
-
+        let B1 = this.t_left = math.divide(math.multiply(A1, P1), this.denominator(P1[1]));
+        let B2 = this.b_left = math.divide(math.multiply(A1, P2), this.denominator(P2[1]));
+        let B3 = this.b_right = math.divide(math.multiply(A1, P3), this.denominator(P3[1]));
+        let B4 = this.t_right = math.divide(math.multiply(A1, P4), this.denominator(P4[1]));
+        this.coords = [B1, B2, B3, B4];
         this.color = color;
+        this.isRed = color == "#FF0000";
         this.context = myGameArea.context;
         this.context.fillStyle = this.color;
         this.context.beginPath();
@@ -163,6 +186,7 @@ class Block {
         this.context.lineTo(myRoadArea.xb1+B4[0], 800-B4[1]);
         this.context.closePath();
         this.context.fill();
+        this.context.strokeStyle = "#000000";
         this.context.stroke();
       }
 
@@ -241,7 +265,7 @@ var myRoadArea = {
                 }
         }
         mySpaceship.update();
-
+        // mySpaceship.isHit();
     },
 
 
