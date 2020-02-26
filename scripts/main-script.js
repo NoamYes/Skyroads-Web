@@ -1,5 +1,6 @@
 'use strict';
 var mySpaceship;
+var paused = true;
 
 function startGame() {
     mySpaceship.constructor(120, 120, "images/Fighter_jet.png", 500, 700, "image");
@@ -155,7 +156,7 @@ class Block {
 
         let b1 = 300;
         let b2 = 300;
-        let height = 500;
+        let height = myRoadArea.roadHeight;
         let wb = b1;
         let wt = b2;
         let h = height;
@@ -205,7 +206,7 @@ class Block {
       }
 
       denominator(y) {
-        return (100-y)*300+y*600
+        return (100-y)*200+y*600
       }
 }
 
@@ -312,14 +313,24 @@ var myRoadArea = {
 }
 
 function moveRoad() {
-    myGameArea.clear();
-    myRoadArea.moveRoad();
+    if (!paused) {
+        myGameArea.clear();
+        myRoadArea.moveRoad();
+    }
+
 }
 
 
 
 window.addEventListener("keydown", moveSelection);
 window.addEventListener("keyup", (event) => mySpaceship.clearmove(event));
+window.addEventListener('keydown', function (e) {
+    var key = e.keyCode;
+    if (key === 27)// esc key
+    {
+        togglePause();
+    }
+    });
 
 function moveSelection(event) {  
     switch (event.keyCode) {
@@ -337,3 +348,15 @@ function moveSelection(event) {
     }
     event.preventDefault();
 };
+
+function togglePause()
+{
+    if (!paused)
+    {
+        paused = true;
+    } else if (paused)
+    {
+       paused= false;
+    }
+
+}
