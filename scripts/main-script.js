@@ -3,11 +3,12 @@ var mySpaceship;
 var paused = true;
 
 function startGame() {
-    mySpaceship.constructor(120, 120, "images/Fighter_jet.png", 500, 700, "image");
+    mySpaceship.constructor(90, 40, "images/Fighter_jet.png", 500, 700, "image");
     myGameArea.start();
     myRoadArea.initRoad();
     myRoadArea.updateRoad();
     setInterval(moveRoad, 10);
+    setInterval(myRoadArea.checkHit, 50);
 }
 
 var myGameArea = {
@@ -100,24 +101,59 @@ var mySpaceship = {
         var myright = this.x + (this.width);
         var mytop = this.y;
         var mybottom = this.y + (this.height);
-        let upLeft = block.t_left;
-        let downLeft = block.b_left;
-        let upRight = block.t_right;
-        let downRight = block.b_right;
-        var crash = false;
-        let left_limit = (downRight[0] - myleft > this.hitSensitivity) &&
-        (downRight[0] - myleft < this.width);
 
-        let right_limit = (myright - downLeft[0] > this.hitSensitivity) &&
-            (myright - downLeft[0] < this.width); 
-        let vert_condition = Math.abs(mybottom - upRight[1]) < this.height/2;
-        if ((left_limit && vert_condition) || 
-            (right_limit && vert_condition)) {
-                crash = true;
-            }
-             
-            return crash;
+        var crash = false;
+        let computedDistance = this.insideBlock(myleft, mytop, block) +
+        this.insideBlock(myright, mytop, block) +
+        this.insideBlock(myleft, mybottom, block) +
+        this.insideBlock(myright, mybottom, block);
+         let insideNum = 1*(this.insideBlock(myleft, mytop, block) > 0) +
+         1*(this.insideBlock(myright, mytop, block) > 0) +
+         1*(this.insideBlock(myleft, mybottom, block) > 0) +
+         1*(this.insideBlock(myright, mybottom, block) > 0);
+
+        if(computedDistance < 50 && computedDistance > 5) crash = true;
+        if (insideNum > 2) crash = true;
+
+        return crash;
       },
+
+      insideBlock(x, y, block) {
+
+        let upLeft = math.matrix(block.t_left);
+        let downLeft = math.matrix(block.b_left);
+        let upRight = math.matrix(block.t_right);
+        let downRight = math.matrix(block.b_right);
+        let inside = (x < upRight._data[0] && x > upLeft._data[0] &&
+            y < downLeft._data[1] && y > upRight._data[1]);
+
+        let temp1 = math.add(downLeft,downRight);
+        let temp2 = math.add(upLeft,upRight);
+        let center = math.add(temp1,temp2);
+        center = math.divide(center,4);
+        center = center._data;    
+        let insideBlock = inside;
+        let d_center = this.dist([x,y], center);
+        let max_d = d_center
+        let sum_d = d_center
+        if(inside) {
+            let k = 5;
+        }
+    
+        return inside*sum_d;
+
+
+
+
+      },
+
+      dist (point1, point2) {
+        var deltaX = point2[0] - point1[0];
+        var deltaY = point2[1] - point1[1];
+        var dist = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+        return (dist);
+      },
+
 
       isHit() {
         if (!this.isJumping) {
@@ -173,10 +209,10 @@ class Block {
         let P3 = [this.x0+blockX, this.y0+blockY];
         let P4 = [this.x0+blockX, this.y0];
 
-        let B1 = this.t_left = math.divide(math.multiply(A1, P1), this.denominator(P1[1]));
-        let B2 = this.b_left = math.divide(math.multiply(A1, P2), this.denominator(P2[1]));
-        let B3 = this.b_right = math.divide(math.multiply(A1, P3), this.denominator(P3[1]));
-        let B4 = this.t_right = math.divide(math.multiply(A1, P4), this.denominator(P4[1]));
+        let B1 = math.divide(math.multiply(A1, P1), this.denominator(P1[1]));
+        let B2 = math.divide(math.multiply(A1, P2), this.denominator(P2[1]));
+        let B3 = math.divide(math.multiply(A1, P3), this.denominator(P3[1]));
+        let B4 = math.divide(math.multiply(A1, P4), this.denominator(P4[1]));
         this.coords = [B1, B2, B3, B4];
         this.color = color;
         this.isRed = color == "#FF0000";
@@ -195,6 +231,10 @@ class Block {
             this.context.stroke();
         // } 
 
+        this.t_left = [myRoadArea.xb1+B2[0],CanvasHeight-B2[1]];
+        this.b_left = [myRoadArea.xb1+B1[0],CanvasHeight-B1[1]];
+        this.t_right = [myRoadArea.xb1+B3[0],CanvasHeight-B3[1]];
+        this.b_right = [myRoadArea.xb1+B4[0], CanvasHeight-B4[1]];
       }
 
       block_move(speedY) {
@@ -275,9 +315,12 @@ var myRoadArea = {
                 }
         }
         mySpaceship.update();
-        // mySpaceship.isHit();
+        
     },
 
+    checkHit() {
+        mySpaceship.isHit();
+    },
 
     addRoad() {
         let rowsNum = this.rowsNum;
@@ -384,3 +427,4 @@ function speedDOWN() {
         myRoadArea.speedY-= 1;
     }
 }
+
