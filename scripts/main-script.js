@@ -3,7 +3,7 @@ var mySpaceship;
 var paused = true;
 
 function startGame() {
-    mySpaceship.constructor(90, 40, "images/Fighter_jet.png", 500, 700, "image");
+    mySpaceship.constructor(70, 30, "images/Fighter_jet.png", 500, 700, "image");
     myGameArea.start();
     myRoadArea.initRoad();
     myRoadArea.updateRoad();
@@ -60,11 +60,11 @@ var mySpaceship = {
         let ctx = myGameArea.context;   
         let x = this.x, y = this.y, w = this.width, h = this.height;
         ctx.save();
-        ctx.translate(this.x,this.y);
-        let diffX = this.x - 600;
-        this.angle = Math.asin(diffX/myGameArea.canvas.height);
-        ctx.rotate(-this.angle);
-        ctx.translate(-x, -y); 
+        // ctx.translate(this.x,this.y);
+        // let diffX = this.x - 600;
+        // this.angle = Math.asin(diffX/myGameArea.canvas.height);
+        // ctx.rotate(-this.angle);
+        // ctx.translate(-x, -y); 
         ctx.drawImage(this.image,x,y,w,h);
         ctx.restore();
         this.gravitySpeed += this.gravity;
@@ -124,9 +124,12 @@ var mySpaceship = {
         let downLeft = math.matrix(block.b_left);
         let upRight = math.matrix(block.t_right);
         let downRight = math.matrix(block.b_right);
-        let inside = (x < upRight._data[0] && x > upLeft._data[0] &&
-            y < downLeft._data[1] && y > upRight._data[1]);
+        // let inside = (y > block.rightEquation(x) && y > block.leftEquation(x) &&
+        //     y < downLeft._data[1] && y > upRight._data[1]);
 
+        let inside = (x > downLeft[0] && x < downRight[0] &&
+        y < downLeft._data[1] && y > upRight._data[1]);
+        
         let temp1 = math.add(downLeft,downRight);
         let temp2 = math.add(upLeft,upRight);
         let center = math.add(temp1,temp2);
@@ -146,6 +149,8 @@ var mySpaceship = {
 
 
       },
+
+
 
       dist (point1, point2) {
         var deltaX = point2[0] - point1[0];
@@ -248,6 +253,22 @@ class Block {
       denominator(y) {
         return (100-y)*350+y*600
       }
+
+      rightEquation(x) {
+          let m = (this.b_right[1]-this.t_right[1])/(
+              this.b_right[0]-this.t_right[0]);
+          let y = m*(x-this.t_right[0]) + this.t_right[1];
+          return y;
+
+    }
+
+    leftEquation(x) {
+        let m = (this.t_left[1]-this.b_left[1])/(
+            this.t_left[0]-this.b_left[0]);
+        let y = m*(x-this.b_left[0]) + this.b_left[1];
+        return y;
+
+  }
 }
 
 
@@ -315,6 +336,7 @@ var myRoadArea = {
                 }
         }
         mySpaceship.update();
+        // this.checkHit();
         
     },
 
