@@ -112,7 +112,7 @@ var mySpaceship = {
          1*(this.insideBlock(myleft, mybottom, block) > 0) +
          1*(this.insideBlock(myright, mybottom, block) > 0);
 
-        if(computedDistance < 50 && computedDistance > 5) crash = true;
+        if(computedDistance < 70 && computedDistance > 5) crash = true;
         if (insideNum > 2) crash = true;
 
         return crash;
@@ -291,6 +291,7 @@ var myRoadArea = {
     // this.blockY = 2*this.base2/this.rowsNum;
     this.blockY = this.blockX;
     this.binaryMat = this.randomRoad(this.prop);
+    this.binaryMat[0] = this.randomArray(100);
     this.blockMat = this.randomRoad(this.prop);
     this.firstrowIndex = Math.floor(this.shift/this.blockY);
 
