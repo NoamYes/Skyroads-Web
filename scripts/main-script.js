@@ -68,7 +68,13 @@ var mySpaceship = {
         ctx.drawImage(this.image,x,y,w,h);
         ctx.restore();
         this.gravitySpeed += this.gravity;
-        this.x += this.speedX;
+        if (this.x > myRoadArea.leftMargin && this.speedX < 0) {
+            this.x += this.speedX;
+        }
+        else if (this.x < myRoadArea.rightMargin-this.width && this.speedX > 0) {
+            this.x += this.speedX;
+        }
+
         this.y += this.speedY+this.gravitySpeed;
         let diffY = mySpaceship.y0 - this.y;
         this.hitBottom();
@@ -240,6 +246,11 @@ class Block {
         this.b_left = [myRoadArea.xb1+B1[0],CanvasHeight-B1[1]];
         this.t_right = [myRoadArea.xb1+B3[0],CanvasHeight-B3[1]];
         this.b_right = [myRoadArea.xb1+B4[0], CanvasHeight-B4[1]];
+        if (!myRoadArea.initiated && this.row == 0 && this.column == myRoadArea.columnsNum-1) {
+            myRoadArea.rightMargin = myRoadArea.xb1+B4[0];
+            myRoadArea.leftMargin = myRoadArea.xb1;
+            myRoadArea.initiated = true;
+        }
       }
 
       block_move(speedY) {
@@ -285,6 +296,7 @@ var myRoadArea = {
     prop : 70, //percentage of one's in matrix
     speedY : 1,
     blockMat : [],
+    initiated: false,
 
     initRoad() {
     this.blockX = this.base1/this.columnsNum;
