@@ -8,7 +8,7 @@ function startGame() {
     myRoadArea.initRoad();
     myRoadArea.updateRoad();
     setInterval(moveRoad, 10);
-    setInterval(myRoadArea.checkHit, 50);
+    setInterval(myRoadArea.checkHit, 20);
 }
 
 var myGameArea = {
@@ -127,7 +127,7 @@ var mySpaceship = {
         // let inside = (y > block.rightEquation(x) && y > block.leftEquation(x) &&
         //     y < downLeft._data[1] && y > upRight._data[1]);
 
-        let inside = (x > downLeft[0] && x < downRight[0] &&
+        let inside = (x > downLeft._data[0] && x < downRight._data[0] &&
         y < downLeft._data[1] && y > upRight._data[1]);
         
         let temp1 = math.add(downLeft,downRight);
@@ -162,15 +162,15 @@ var mySpaceship = {
 
       isHit() {
         if (!this.isJumping) {
-            for (var i = 0; i < myRoadArea.rowsNum; i++) { 
+            // for (var i = 0; i < myRoadArea.rowsNum; i++) { 
                 for(var j = 0; j < myRoadArea.columnsNum; j++) {
                     let rNum = myRoadArea.rowsNum;
-                    let isRed = myRoadArea.blockMat[i][j].isRed;
-                    if(this.crashWith(myRoadArea.blockMat[i][j]) && isRed) {
+                    let isRed = myRoadArea.blockMat[myRoadArea.firstrowIndex][j].isRed;
+                    if(this.crashWith(myRoadArea.blockMat[myRoadArea.firstrowIndex][j]) && isRed) {
                         alert('Hit')
                     }
                 }
-            }
+            // }
         }
       }
 
@@ -280,7 +280,7 @@ var myRoadArea = {
     xb1 : 300,
     yb1 : 0,
     roadHeight : 500,
-    rowsNum : 20,
+    rowsNum : 30,
     columnsNum : 6,
     prop : 70, //percentage of one's in matrix
     speedY : 1,
@@ -292,6 +292,7 @@ var myRoadArea = {
     this.blockY = this.blockX;
     this.binaryMat = this.randomRoad(this.prop);
     this.blockMat = this.randomRoad(this.prop);
+    this.firstrowIndex = Math.floor(this.shift/this.blockY);
 
     },
 
@@ -335,6 +336,7 @@ var myRoadArea = {
                 }
                 }
         }
+        this.firstrowIndex = Math.floor(this.shift/this.blockY);
         mySpaceship.update();
         // this.checkHit();
         
