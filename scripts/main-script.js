@@ -300,7 +300,7 @@ var myRoadArea = {
     roadHeight : 500,
     rowsNum : 30,
     columnsNum : 6,
-    prop : 90, //percentage of one's in matrix
+    prop : 10, //percentage of one's in matrix
     speedY : 1,
     blockMat : [],
     initiated: false,
@@ -310,7 +310,7 @@ var myRoadArea = {
     // this.blockY = 2*this.base2/this.rowsNum;
     this.blockY = this.blockX;
     this.binaryMat = this.randomRoad(this.prop);
-    this.binaryMat[0] = this.randomArray(100);
+    this.binaryMat[0] = this.randomArray(0);
     this.blockMat = this.randomRoad(this.prop);
     this.firstrowIndex = Math.floor(this.shift/this.blockY);
 
@@ -343,7 +343,7 @@ var myRoadArea = {
     },
 
     moveRoad() {
-        this.prop = 100*(1-calcDifficulty(accumProgress));
+        this.prop = 100*(calcDifficulty(accumProgress));
         if(this.shift >= this.rowsNum*this.blockY/2) {
             this.addRoad();
             this.shift = 0;
@@ -384,7 +384,8 @@ var myRoadArea = {
         let arrayMax = this.columnsNum;
         const Perc = 101;
         for (var i = 0; i < arrayMax; i++) {
-        myArray.push(Math.floor(Math.random()*Perc/prop));
+        let Prop = 100 - prop;
+        myArray.push(Math.floor(Math.random()*Perc/Prop));
             }
         return myArray;
         },
@@ -405,7 +406,7 @@ function moveRoad() {
         myGameArea.clear();
         myRoadArea.moveRoad();
         let Score = calcScore(accumProgress);
-        myScore.text = "SCORE: " + Score;
+        myScore.text = "SCORE: " + Math.floor(Score) +", DIFFICULTY: " + Math.floor(myRoadArea.prop) ;
         myScore.update();
     }
 
@@ -426,7 +427,7 @@ function calcScore(progress) {
 }
 
 function calcDifficulty(progress) {
-    return 0.6*(2/Math.PI)*Math.atan(progress/100000)+0.2;
+    return 0.6*(2/Math.PI)*Math.atan(progress/10000)+0.2;
 }
 
 function component(width, height, color, x, y, type) {
