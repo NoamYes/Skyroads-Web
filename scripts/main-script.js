@@ -427,7 +427,7 @@ function calcScore(progress) {
 }
 
 function calcDifficulty(progress) {
-    return 0.6*(2/Math.PI)*Math.atan(progress/10000)+0.2;
+    return 0.6*(2/Math.PI)*Math.atan(progress/10000)+0.05;
 }
 
 function component(width, height, color, x, y, type) {
