@@ -1,14 +1,19 @@
 'use strict';
 var mySpaceship;
+var accumProgress = 0;
+var myScore;
 var paused = true;
+var roadInterval;
+var hitInterva;
 
 function startGame() {
     mySpaceship.constructor(70, 30, "images/Fighter_jet.png", 500, 700, "image");
+    myScore = new component("30px", "Consolas", "white", 280, 40, "text");
     myGameArea.start();
     myRoadArea.initRoad();
     myRoadArea.updateRoad();
-    setInterval(moveRoad, 10);
-    setInterval(myRoadArea.checkHit, 20);
+    roadInterval  = setInterval(moveRoad, 10);
+    hitInterval  = setInterval(myRoadArea.checkHit, 20);
 }
 
 var myGameArea = {
@@ -174,6 +179,8 @@ var mySpaceship = {
                     let isRed = myRoadArea.blockMat[myRoadArea.firstrowIndex][j].isRed;
                     if(this.crashWith(myRoadArea.blockMat[myRoadArea.firstrowIndex][j]) && isRed) {
                         alert('Hit')
+                        accumProgress = 0;
+                        // resetGame();
                     }
                 }
             // }
@@ -293,7 +300,7 @@ var myRoadArea = {
     roadHeight : 500,
     rowsNum : 30,
     columnsNum : 6,
-    prop : 70, //percentage of one's in matrix
+    prop : 90, //percentage of one's in matrix
     speedY : 1,
     blockMat : [],
     initiated: false,
@@ -336,13 +343,14 @@ var myRoadArea = {
     },
 
     moveRoad() {
-
+        this.prop = 100*(1-calcDifficulty(accumProgress));
         if(this.shift >= this.rowsNum*this.blockY/2) {
             this.addRoad();
             this.shift = 0;
         }
         else{ 
             this.shift += this.speedY;
+            accumProgress += this.speedY;
             for (var i = 0; i < this.rowsNum; i++) {
                 for(var j = 0; j < this.columnsNum; j++) {
                     this.blockMat[i][j].block_move(this.speedY);
@@ -396,11 +404,52 @@ function moveRoad() {
     if (!paused) {
         myGameArea.clear();
         myRoadArea.moveRoad();
+        let Score = calcScore(accumProgress);
+        myScore.text = "SCORE: " + Score;
+        myScore.update();
     }
 
 }
 
+function resetGame() {
+    
+    clearInterval(roadInterval);
+    clearInterval(hitInterval);
+    myGameArea.clear();
+    // document.location.reload();
+    startGame();
 
+}
+
+function calcScore(progress) {
+    return progress/10;
+}
+
+function calcDifficulty(progress) {
+    return 0.6*(2/Math.PI)*Math.atan(progress/100000)+0.2;
+}
+
+function component(width, height, color, x, y, type) {
+    let ctx = myGameArea.context;  
+    this.type = type;
+    this.width = width;
+    this.height = height;
+    this.speedX = 0;
+    this.speedY = 0;
+    this.x = x;
+    this.y = y;
+    this.update = function() {
+      ctx = myGameArea.context;
+      if (this.type == "text") {
+        ctx.font = this.width + " " + this.height;
+        ctx.fillStyle = color;
+        ctx.fillText(this.text, this.x, this.y);
+      } else {
+        ctx.fillStyle = color;
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+      }
+    }
+  }
 
 window.addEventListener("keydown", moveSelection);
 window.addEventListener("keyup", (event) => mySpaceship.clearmove(event));
