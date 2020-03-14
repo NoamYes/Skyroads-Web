@@ -2,13 +2,15 @@
 var mySpaceship;
 var accumProgress = 0;
 var myScore;
+var hitScreen;
 var paused = true;
 var roadInterval;
-var hitInterva;
+var hitInterval;
 
 function startGame() {
     mySpaceship.constructor(70, 30, "images/Fighter_jet.png", 500, 700, "image");
     myScore = new component("30px", "Consolas", "white", 280, 40, "text");
+    hitScreen = new component("150px", "Consolas", "red", 450, 200, "text");
     myGameArea.start();
     myRoadArea.initRoad();
     myRoadArea.updateRoad();
@@ -16,10 +18,20 @@ function startGame() {
     hitInterval  = setInterval(myRoadArea.checkHit, 20);
 }
 
+function resetGame() {
+    
+    clearInterval(roadInterval);
+    clearInterval(hitInterval);
+    // myGameArea.clear();
+    // document.location.reload();
+    // startGame();
+
+}
+
 var myGameArea = {
     canvas : document.createElement("canvas"),
     start() {
-        this.canvas.width = 2440;
+        this.canvas.width = 1440;
         this.canvas.height = 800;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
@@ -178,9 +190,10 @@ var mySpaceship = {
                     let rNum = myRoadArea.rowsNum;
                     let isRed = myRoadArea.blockMat[myRoadArea.firstrowIndex][j].isRed;
                     if(this.crashWith(myRoadArea.blockMat[myRoadArea.firstrowIndex][j]) && isRed) {
-                        alert('Hit')
+                        // alert('Hit')
+                        hitScreen.update();
                         accumProgress = 0;
-                        // resetGame();
+                        resetGame();
                     }
                 }
             // }
@@ -407,27 +420,19 @@ function moveRoad() {
         myRoadArea.moveRoad();
         let Score = calcScore(accumProgress);
         myScore.text = "SCORE: " + Math.floor(Score) +", DIFFICULTY: " + Math.floor(myRoadArea.prop) ;
+        hitScreen.text = "Hit!"
         myScore.update();
     }
 
 }
 
-function resetGame() {
-    
-    clearInterval(roadInterval);
-    clearInterval(hitInterval);
-    myGameArea.clear();
-    // document.location.reload();
-    startGame();
-
-}
 
 function calcScore(progress) {
     return progress/10;
 }
 
 function calcDifficulty(progress) {
-    return 0.6*(2/Math.PI)*Math.atan(progress/10000)+0.05;
+    return 0.4*(2/Math.PI)*Math.atan(progress/10000)+0.05;
 }
 
 function component(width, height, color, x, y, type) {
