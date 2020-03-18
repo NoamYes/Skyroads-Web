@@ -12,7 +12,7 @@ var hitInterval;
 function startGame() {
     mySpaceship.constructor(70, 30, "images/Fighter_jet.png", 500, 700, "image");
     myScore = new component("30px", "Consolas", "white", 280, 40, "text");
-    hitScreen = new component("150px", "Consolas", "red", 450, 200, "text");
+    hitScreen = new component("180px", "Consolas", "red", 850, 200, "text");
     pressEscInstruction = new component("30px", "Consolas", "yellow", 70, 300, "text");
     myGameArea.start();
     myRoadArea.initRoad();
