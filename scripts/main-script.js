@@ -4,6 +4,7 @@ var accumProgress = 0;
 var myScore;
 var hitScreen;
 var paused = true;
+var gameOver = false;
 var roadInterval;
 var hitInterval;
 
@@ -18,14 +19,21 @@ function startGame() {
     hitInterval  = setInterval(myRoadArea.checkHit, 20);
 }
 
-function resetGame() {
+function stopGameOver() {
     
     clearInterval(roadInterval);
     clearInterval(hitInterval);
+    gameOver = true;
     // myGameArea.clear();
     // document.location.reload();
     // startGame();
 
+}
+
+function resetGame() {
+    myGameArea.clear();
+    document.location.reload();
+    startGame();
 }
 
 var myGameArea = {
@@ -196,7 +204,7 @@ var mySpaceship = {
                         // alert('Hit')
                         hitScreen.update();
                         accumProgress = 0;
-                        resetGame();
+                        stopGameOver();
                     }
                 }
             // }
@@ -468,7 +476,13 @@ window.addEventListener('keydown', function (e) {
     var key = e.keyCode;
     if (key === 27)// esc key
     {
-        togglePause();
+        if(gameOver == false) {
+            togglePause();
+        }
+        else {
+            resetGame();
+        }
+
     }
     });
 
