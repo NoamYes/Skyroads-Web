@@ -204,6 +204,7 @@ var mySpaceship = {
                     let isRed = myRoadArea.blockMat[myRoadArea.firstrowIndex][j].isRed;
                     if(this.crashWith(myRoadArea.blockMat[myRoadArea.firstrowIndex][j]) && isRed) {
                         // alert('Hit')
+                        hitScreen.text = "HIT!"
                         hitScreen.update();
                         accumProgress = 0;
                         stopGameOver();
@@ -435,7 +436,6 @@ function moveRoad() {
         myRoadArea.moveRoad();
         let Score = calcScore(accumProgress);
         myScore.text = "SCORE: " + Math.floor(Score) +", DIFFICULTY: " + Math.floor(myRoadArea.prop) ;
-        hitScreen.text = "Hit!"
         myScore.update();
     }
 
