@@ -147,11 +147,14 @@ var mySpaceship = {
         let downLeft = math.matrix(block.b_left);
         let upRight = math.matrix(block.t_right);
         let downRight = math.matrix(block.b_right);
-        // let inside = (y > block.rightEquation(x) && y > block.leftEquation(x) &&
-        //     y < downLeft._data[1] && y > upRight._data[1]);
+        let insideLeft =  block.insideLeftEquation(x ,y);
+        let insideRight =  block.insideRightEquation(x, y);
+        let inside = (insideLeft && insideRight &&
+            y < downLeft._data[1] && y > upRight._data[1] &&
+            x > downLeft._data[0] && x < downRight._data[0]);
 
-        let inside = (x > downLeft._data[0] && x < downRight._data[0] &&
-        y < downLeft._data[1] && y > upRight._data[1]);
+        // let inside = (x > downLeft._data[0] && x < downRight._data[0] &&
+        // y < downLeft._data[1] && y > upRight._data[1]);
         
         let temp1 = math.add(downLeft,downRight);
         let temp2 = math.add(upLeft,upRight);
@@ -285,19 +288,21 @@ class Block {
         return (100-y)*350+y*600
       }
 
-      rightEquation(x) {
+      insideRightEquation(x_, y) {
+        let CanvasHeight = myGameArea.canvas.height;
           let m = (this.b_right[1]-this.t_right[1])/(
               this.b_right[0]-this.t_right[0]);
-          let y = m*(x-this.t_right[0]) + this.t_right[1];
-          return y;
+          let y_ = m*(x_-this.t_right[0]) + this.t_right[1];
+          return ((y < y_) && m < 0 ) || ((y > y_) && (m > 0))
 
     }
 
-    leftEquation(x) {
+    insideLeftEquation(x_, y) {
+        let CanvasHeight = myGameArea.canvas.height;
         let m = (this.t_left[1]-this.b_left[1])/(
             this.t_left[0]-this.b_left[0]);
-        let y = m*(x-this.b_left[0]) + this.b_left[1];
-        return y;
+        let y_ = m*(x_-this.t_left[0]) + this.t_left[1];
+        return ((y > y_) && m < 0 ) || ((y < y_) && (m > 0))
 
   }
 }
