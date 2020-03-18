@@ -3,7 +3,8 @@ var mySpaceship;
 var accumProgress = 0;
 var myScore;
 var hitScreen;
-var paused = true;
+var pressEscInstruction;
+var paused = false;
 var gameOver = false;
 var roadInterval;
 var hitInterval;
@@ -12,6 +13,7 @@ function startGame() {
     mySpaceship.constructor(70, 30, "images/Fighter_jet.png", 500, 700, "image");
     myScore = new component("30px", "Consolas", "white", 280, 40, "text");
     hitScreen = new component("150px", "Consolas", "red", 450, 200, "text");
+    pressEscInstruction = new component("30px", "Consolas", "yellow", 70, 300, "text");
     myGameArea.start();
     myRoadArea.initRoad();
     myRoadArea.updateRoad();
@@ -24,9 +26,9 @@ function stopGameOver() {
     clearInterval(roadInterval);
     clearInterval(hitInterval);
     gameOver = true;
-    // myGameArea.clear();
-    // document.location.reload();
-    // startGame();
+    pressEscInstruction.text = "PRESS ESC KEY TO TRY AGAIN";
+    pressEscInstruction.update();
+
 
 }
 
@@ -520,6 +522,8 @@ function togglePause()
     if (!paused)
     {
         paused = true;
+        pressEscInstruction.text = "PRESS ESC KEY TO RESUME";
+        pressEscInstruction.update();
     } else if (paused)
     {
        paused= false;
