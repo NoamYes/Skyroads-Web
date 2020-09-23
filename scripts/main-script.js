@@ -1,3 +1,4 @@
+
 'use strict';
 var mySpaceship;
 var accumProgress = 0;
